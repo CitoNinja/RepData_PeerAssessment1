@@ -1,9 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: "plot chunks 1-4"
-  html_document: "PA1_template.Rmd"
-    keep_md: true
----
+---  
+title: "Reproducible Research: Peer Assessment 1"  
+output: "plot chunks 1-4"  
+  html_document: "PA1_template.Rmd"  
+    keep_md: true  
+---  
 
 ## Loading data
 ```{r loaddata}
