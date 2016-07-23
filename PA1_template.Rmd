@@ -1,0 +1,118 @@
+
+---
+   title: "Reproducible Research: Peer Assessment 1"
+output: 
+   html_document:
+   keep_md: true
+---
+
+## Loading data
+```{r loaddata}
+data <- read.csv("activity.csv")
+```
+## What is mean total number of steps taken per day?
+```{r}
+## Creating plot - chunk-1
+library(ggplot2)
+total.steps <- tapply(data$steps, data$date, FUN=sum, na.rm=TRUE)
+qplot(total.steps, binwidth=1050, xlab="Total Number of Steps Per Day")
+mean(total.steps, na.rm=TRUE)
+median(total.steps, na.rm=TRUE)
+```
+[Chunk-1 plot][1]  
+
+## What is the average daily activity pattern?
+Creating plot with average number of steps
+```{r}
+## creating plot - chunk-2
+library(ggplot2)
+averages <- aggregate(x=list(steps=data$steps), by=list(interval=data$interval),
+            FUN=mean, na.rm=TRUE)
+
+ggplot(data=averages, aes(x=interval, y=steps)) +
+   geom_line(colour="red") +
+   xlab("5-Minute Interval") +
+   ylab("Step Average")
+```
+[Chunk-2 plot][2]  
+
+The average across all the days in the dataset.
+```{r}
+averages[which.max(averages$steps),]
+```
+
+## Imputing missing values
+
+If there is missing data (NA), replacing the missing data with the mean of the intervals should
+keep any bias towards those values down.
+```{r how_many_missing}
+## Missing data
+missing <- is.na(data$steps)
+table(missing)
+```
+
+Missing values replaced with 5-minute interval mean.
+
+```{r}
+# Replace missing values with mean value of the 5-minute interval mean
+fill.value <- function(steps, interval) {
+   filled <- NA
+      if (!is.na(steps))
+            filled <- c(steps)
+      else
+            filled <- (averages[averages$interval==interval, "steps"])
+         return(filled)
+}
+filled.data <- data
+filled.data$steps <- mapply(fill.value, filled.data$steps, filled.data$interval)
+```
+Using the preppared data, it is now time to create a plot
+```{r}
+## Finding the total number of steps per day
+## creating plot - chunk-3
+total.steps <- tapply(filled.data$steps, filled.data$date, FUN=sum)
+qplot(total.steps, binwidth=1050, xlab="Total Number of Steps Per Day")
+mean(total.steps)
+median(total.steps)
+```
+[Chunk-3 plot][3]  
+
+The mean and meian values should now be higher now that the missing datahas been resolved.  
+What has happenned is the 0 values or NA values have been replaced with the mean of the   
+5-minute step intervals. This allows for a less biased look at the data.
+
+## Are there differences in activity patterns between weekdays and weekends?  
+1 Find the days of the week for the measurements.  
+2 create a plot to show the differences between weekdays and weekends.
+
+```{r}
+## Setting up days of the week
+weekday.or.weekend <- function(date) {
+   day <- weekdays(date)
+   
+      if (day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))
+            return("Weekday")
+   
+      else if (day %in% c("Saturday", "Sunday"))
+            return("Weekend")
+   
+      else
+            stop("Invalid Date")
+}
+
+filled.data$date <- as.Date(filled.data$date)
+filled.data$day <- sapply(filled.data$date, FUN=weekday.or.weekend)
+```
+Part 2 The Plot Weekdays VS Weekends
+```{r}
+## aggregating the number of steps by intervals
+averages <- aggregate(steps ~ interval + day, data=filled.data, mean)
+## creating plot - chunk-4
+ggplot(averages, aes(interval, steps)) + geom_line(colour="blue") + facet_grid(day ~ .) +
+   xlab("5-Minute Interval") + ylab("Number of Steps")
+```
+[Chunk-4 plot][4]
+[1]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-1.png "Chunk-1 plot"
+[2]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-2.png "Chunk-2 plot"
+[3]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-3.png "Chunk-3 plot"
+[4]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-4.png "Chunk-4 plot"
