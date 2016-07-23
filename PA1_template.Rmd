@@ -1,8 +1,8 @@
 
 ---
    title: "Reproducible Research: Peer Assessment 1"
-output: 
-   html_document:
+   output: "plot chunks 1-4"
+   html_document:"PA1_template.Rmd"
    keep_md: true
 ---
 
@@ -19,7 +19,7 @@ qplot(total.steps, binwidth=1050, xlab="Total Number of Steps Per Day")
 mean(total.steps, na.rm=TRUE)
 median(total.steps, na.rm=TRUE)
 ```
-[Chunk-1 plot][1]  
+![Chunk-1 plot][1]  
 
 ## What is the average daily activity pattern?
 Creating plot with average number of steps
@@ -34,7 +34,7 @@ ggplot(data=averages, aes(x=interval, y=steps)) +
    xlab("5-Minute Interval") +
    ylab("Step Average")
 ```
-[Chunk-2 plot][2]  
+![Chunk-2 plot][2]  
 
 The average across all the days in the dataset.
 ```{r}
@@ -75,7 +75,7 @@ qplot(total.steps, binwidth=1050, xlab="Total Number of Steps Per Day")
 mean(total.steps)
 median(total.steps)
 ```
-[Chunk-3 plot][3]  
+![Chunk-3 plot][3]  
 
 The mean and meian values should now be higher now that the missing datahas been resolved.  
 What has happenned is the 0 values or NA values have been replaced with the mean of the   
@@ -111,7 +111,7 @@ averages <- aggregate(steps ~ interval + day, data=filled.data, mean)
 ggplot(averages, aes(interval, steps)) + geom_line(colour="blue") + facet_grid(day ~ .) +
    xlab("5-Minute Interval") + ylab("Number of Steps")
 ```
-[Chunk-4 plot][4]
+![Chunk-4 plot][4]
 [1]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-1.png "Chunk-1 plot"
 [2]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-2.png "Chunk-2 plot"
 [3]:https://github.com/CitoNinja/RepData_PeerAssessment1/blob/master/Images/chunk-3.png "Chunk-3 plot"
